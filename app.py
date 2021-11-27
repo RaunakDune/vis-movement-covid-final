@@ -17,7 +17,7 @@ app = dash.Dash(
         {"name": "viewport", "content": "width=device-width, initial-scale=1.0"}
     ],
 )
-app.title = "Modelling COVID-19 Spread in Houston"
+app.title = "Modelling COVID-19 Spread"
 server = app.server
 
 # Load data
@@ -41,6 +41,7 @@ df_full_data["County"] = (
     df_full_data["Unnamed: 0"] + ", " + df_full_data.County.map(str)
 )
 
+MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 YEARS = [2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015]
 
 BINS = [
@@ -124,7 +125,7 @@ app.layout = html.Div(
                             children=[
                                 html.P(
                                     id="slider-text",
-                                    children="Drag the slider to change the year:",
+                                    children="Drag the slider to change the week:",
                                 ),
                                 dcc.Slider(
                                     id="years-slider",
