@@ -95,7 +95,7 @@ app.layout = html.Div(
             id="header",
             children=[
                 html.A(
-                    html.Img(id="logo", src=app.get_asset_url("logo-uh-primary.png")),
+                    html.Img(id="logo", src=app.get_asset_url("logo-interlocking-uh-red.png")),
                     href="http://www2.cs.uh.edu/~chengu/Teaching/Fall2021/COSC6344_Visualization_Fall2021.html",
                 ),
                 html.A(
@@ -104,7 +104,7 @@ app.layout = html.Div(
                 ),
                 html.A(
                     html.Button("Source Code", className="link-button"),
-                    href="https://github.com/plotly/dash-sample-apps/tree/main/apps/dash-opioid-epidemic",
+                    href="https://github.com/RaunakDune/vis-movement-covid-final",
                 ),
                 html.H4(children="Movement of Individuals during the Covid-19 Epidemic"),
                 html.P(
