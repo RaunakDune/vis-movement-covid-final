@@ -37,9 +37,13 @@ df_full_data = pd.read_csv(
 df_full_data["County Code"] = df_full_data["County Code"].apply(
     lambda x: str(x).zfill(5)
 )
-df_full_data["County"] = (
-    df_full_data["Unnamed: 0"] + ", " + df_full_data.County.map(str)
-)
+# df_full_data["County"] = (
+#     df_full_data["Unnamed: 0"] + ", " + df_full_data.County.map(str)
+# )
+# print(df_full_data)
+# df_full_data["County"] = (
+#     df_full_data.County.map(str)
+# )
 
 MONTHS = ['August', 'September', 'October', 'November', 'December','January', 'February', 'March', 'April', 'May', 'June', 'July']
 YEARS = [2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015]
@@ -130,15 +134,15 @@ app.layout = html.Div(
                                 ),
                                 dcc.Slider(
                                     id="months-slider",
-                                    min=MONTHS[0],
-                                    max=MONTHS[-1],
-                                    value=MONTHS[0],
+                                    min=0,
+                                    max=11,
+                                    value=0,
                                     marks={
-                                        str(month): {
-                                            "label": str(month),
+                                        str(m): {
+                                            "label": str(MONTHS[m]),
                                             "style": {"color": "#7fafdf"},
                                         }
-                                        for month in MONTHS
+                                        for m in range(0,12)
                                     },
                                 ),
                             ],
@@ -187,7 +191,7 @@ app.layout = html.Div(
                                 },
                                 {
                                     "label": "Histogram of total number of infections (2020~2021)",
-                                    "value": "absolute_deaths_all_time",
+                                    "value": "absolute_infections_all_time",
                                 },
                                 {
                                     "label": "Age-adjusted infection rate (single month)",
@@ -195,7 +199,7 @@ app.layout = html.Div(
                                 },
                                 {
                                     "label": "Trends in age-adjusted infection rate (2020~2021)",
-                                    "value": "death_rate_all_time",
+                                    "value": "infection_rate_all_time",
                                 },
                             ],
                             value="show_infection_rates_every_month",
@@ -227,6 +231,7 @@ app.layout = html.Div(
     [State("county-choropleth", "figure")],
 )
 def display_map(month, figure):
+    month = MONTHS[month]
     cm = dict(zip(BINS, DEFAULT_COLORSCALE))
 
     data = [
@@ -313,7 +318,7 @@ def display_map(month, figure):
 def update_map_title(month):
     return "Heatmap of age adjusted infection rates \
 				from COVID in the month of {0}".format(
-        month
+        MONTHS[month]
     )
 
 
@@ -326,6 +331,7 @@ def update_map_title(month):
     ],
 )
 def display_selected_data(selectedData, chart_dropdown, month):
+    month = MONTHS[month]
     if selectedData is None:
         return dict(
             data=[dict(x=0, y=0)],
@@ -344,11 +350,12 @@ def display_selected_data(selectedData, chart_dropdown, month):
             fips[i] = "0" + fips[i]
     dff = df_full_data[df_full_data["County Code"].isin(fips)]
     dff = dff.sort_values("Month")
+    print(dff)
 
     regex_pat = re.compile(r"Unreliable", flags=re.IGNORECASE)
     dff["Age Adjusted Rate"] = dff["Age Adjusted Rate"].replace(regex_pat, 0)
 
-    if chart_dropdown != "death_rate_all_time":
+    if chart_dropdown != "infection_rate_all_time":
         title = "Absolute infection per county, <b>1999-2016</b>"
         AGGREGATE_BY = "Infection"
         if "show_absolute_infections_every_month" == chart_dropdown:
