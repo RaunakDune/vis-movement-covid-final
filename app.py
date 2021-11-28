@@ -46,7 +46,6 @@ df_full_data["County Code"] = df_full_data["County Code"].apply(
 # )
 
 MONTHS = ['August', 'September', 'October', 'November', 'December','January', 'February', 'March', 'April', 'May', 'June', 'July']
-YEARS = [2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015]
 
 BINS = [
     "0-2",
@@ -68,22 +67,22 @@ BINS = [
 ]
 
 DEFAULT_COLORSCALE = [
-    "#f2fffb",
-    "#bbffeb",
-    "#98ffe0",
-    "#79ffd6",
-    "#6df0c8",
-    "#69e7c0",
-    "#59dab2",
-    "#45d0a5",
-    "#31c194",
-    "#2bb489",
-    "#25a27b",
-    "#1e906d",
-    "#188463",
-    "#157658",
-    "#11684d",
-    "#10523e",
+    "#f4e6ff",
+    "#eacfff",
+    "#e2bdff",
+    "#d7a3ff",
+    "#cb87ff",
+    "#c273ff",
+    "#b95eff",
+    "#af47ff",
+    "#a836ff",
+    "#9f21ff",
+    "#960dff",
+    "#8800f0",
+    "#6400b0",
+    "#480080",
+    "#2e0052",
+    "#170029",
 ]
 
 DEFAULT_OPACITY = 0.8
@@ -112,10 +111,10 @@ app.layout = html.Div(
                     html.Button("Source Code", className="link-button"),
                     href="https://github.com/RaunakDune/vis-movement-covid-final",
                 ),
-                html.H4(children="Movement of Individuals during the Covid-19 Epidemic"),
+                html.H4(children="Modelling the Covid-19 Epidemic"),
                 html.P(
                     id="description",
-                    children="Use data from SafeGraph to idetify pattersn of movement that lead to increased COVID-19 infection.",
+                    children="Using data from SafeGraph to idetify patterns that lead to increased COVID-19 infection.",
                 ),
             ],
         ),
