@@ -31,7 +31,7 @@ df_lat_lon["FIPS "] = df_lat_lon["FIPS "].apply(lambda x: str(x).zfill(5))
 
 df_full_data = pd.read_csv(
     os.path.join(
-        APP_PATH, os.path.join("data", "age_adjusted_death_rate_no_quotes.csv")
+        APP_PATH, os.path.join("data", "covid_infection_monthly.csv")
     )
 )
 df_full_data["County Code"] = df_full_data["County Code"].apply(
@@ -41,7 +41,7 @@ df_full_data["County"] = (
     df_full_data["Unnamed: 0"] + ", " + df_full_data.County.map(str)
 )
 
-MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+MONTHS = ['August', 'September', 'October', 'November', 'December','January', 'February', 'March', 'April', 'May', 'June', 'July']
 YEARS = [2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015]
 
 BINS = [
@@ -84,7 +84,8 @@ DEFAULT_COLORSCALE = [
 
 DEFAULT_OPACITY = 0.8
 
-mapbox_access_token = "pk.eyJ1IjoicGxvdGx5bWFwYm94IiwiYSI6ImNrOWJqb2F4djBnMjEzbG50amg0dnJieG4ifQ.Zme1-Uzoi75IaFbieBDl3A"
+# mapbox_access_token = "pk.eyJ1IjoicGxvdGx5bWFwYm94IiwiYSI6ImNrOWJqb2F4djBnMjEzbG50amg0dnJieG4ifQ.Zme1-Uzoi75IaFbieBDl3A"
+mapbox_access_token = "pk.eyJ1IjoicmF1bmFrcyIsImEiOiJja3dpbXQ1NWowb3Y4Mm9sNTdoNjBreHdqIn0.pEa4wnRKGudDG8E7SzxUGw"
 mapbox_style = "mapbox://styles/plotlymapbox/cjvprkf3t1kns1cqjxuxmwixz"
 
 # App layout
@@ -125,19 +126,19 @@ app.layout = html.Div(
                             children=[
                                 html.P(
                                     id="slider-text",
-                                    children="Drag the slider to change the week:",
+                                    children="Drag the slider to change the Month:",
                                 ),
                                 dcc.Slider(
-                                    id="years-slider",
-                                    min=min(YEARS),
-                                    max=max(YEARS),
-                                    value=min(YEARS),
+                                    id="months-slider",
+                                    min=MONTHS[0],
+                                    max=MONTHS[-1],
+                                    value=MONTHS[0],
                                     marks={
-                                        str(year): {
-                                            "label": str(year),
+                                        str(month): {
+                                            "label": str(month),
                                             "style": {"color": "#7fafdf"},
                                         }
-                                        for year in YEARS
+                                        for month in MONTHS
                                     },
                                 ),
                             ],
@@ -147,8 +148,8 @@ app.layout = html.Div(
                             children=[
                                 html.P(
                                     "Heatmap of age adjusted mortality rates \
-                            from poisonings in year {0}".format(
-                                        min(YEARS)
+                            from COVID in the month of {0}".format(
+                                        MONTHS[0]
                                     ),
                                     id="heatmap-title",
                                 ),
@@ -181,23 +182,23 @@ app.layout = html.Div(
                         dcc.Dropdown(
                             options=[
                                 {
-                                    "label": "Histogram of total number of deaths (single year)",
-                                    "value": "show_absolute_deaths_single_year",
+                                    "label": "Histogram of total number of infections (single month)",
+                                    "value": "show_absolute_infections_every_month",
                                 },
                                 {
-                                    "label": "Histogram of total number of deaths (1999-2016)",
+                                    "label": "Histogram of total number of infections (2020~2021)",
                                     "value": "absolute_deaths_all_time",
                                 },
                                 {
-                                    "label": "Age-adjusted death rate (single year)",
-                                    "value": "show_death_rate_single_year",
+                                    "label": "Age-adjusted infection rate (single month)",
+                                    "value": "show_infection_rates_every_month",
                                 },
                                 {
-                                    "label": "Trends in age-adjusted death rate (1999-2016)",
+                                    "label": "Trends in age-adjusted infection rate (2020~2021)",
                                     "value": "death_rate_all_time",
                                 },
                             ],
-                            value="show_death_rate_single_year",
+                            value="show_infection_rates_every_month",
                             id="chart-dropdown",
                         ),
                         dcc.Graph(
@@ -222,10 +223,10 @@ app.layout = html.Div(
 
 @app.callback(
     Output("county-choropleth", "figure"),
-    [Input("years-slider", "value")],
+    [Input("months-slider", "value")],
     [State("county-choropleth", "figure")],
 )
-def display_map(year, figure):
+def display_map(month, figure):
     cm = dict(zip(BINS, DEFAULT_COLORSCALE))
 
     data = [
@@ -243,7 +244,7 @@ def display_map(year, figure):
         dict(
             showarrow=False,
             align="right",
-            text="<b>Age-adjusted death rate<br>per county per year</b>",
+            text="<b>Age-adjusted infection rate<br>per county per month</b>",
             font=dict(color="#2cfec1"),
             bgcolor="#1f2630",
             x=0.95,
@@ -292,14 +293,14 @@ def display_map(year, figure):
     )
 
     base_url = "https://raw.githubusercontent.com/jackparmer/mapbox-counties/master/"
+    loc = MONTHS.index(month)+2004
     for bin in BINS:
         geo_layer = dict(
             sourcetype="geojson",
-            source=base_url + str(year) + "/" + bin + ".geojson",
+            source=base_url + str(loc) + "/" + bin + ".geojson",
             type="fill",
             color=cm[bin],
             opacity=DEFAULT_OPACITY,
-            # CHANGE THIS
             fill=dict(outlinecolor="#afafaf"),
         )
         layout["mapbox"]["layers"].append(geo_layer)
@@ -308,11 +309,11 @@ def display_map(year, figure):
     return fig
 
 
-@app.callback(Output("heatmap-title", "children"), [Input("years-slider", "value")])
-def update_map_title(year):
-    return "Heatmap of age adjusted mortality rates \
-				from poisonings in year {0}".format(
-        year
+@app.callback(Output("heatmap-title", "children"), [Input("months-slider", "value")])
+def update_map_title(month):
+    return "Heatmap of age adjusted infection rates \
+				from COVID in the month of {0}".format(
+        month
     )
 
 
@@ -321,10 +322,10 @@ def update_map_title(year):
     [
         Input("county-choropleth", "selectedData"),
         Input("chart-dropdown", "value"),
-        Input("years-slider", "value"),
+        Input("months-slider", "value"),
     ],
 )
-def display_selected_data(selectedData, chart_dropdown, year):
+def display_selected_data(selectedData, chart_dropdown, month):
     if selectedData is None:
         return dict(
             data=[dict(x=0, y=0)],
@@ -342,35 +343,35 @@ def display_selected_data(selectedData, chart_dropdown, year):
         if len(fips[i]) == 4:
             fips[i] = "0" + fips[i]
     dff = df_full_data[df_full_data["County Code"].isin(fips)]
-    dff = dff.sort_values("Year")
+    dff = dff.sort_values("Month")
 
     regex_pat = re.compile(r"Unreliable", flags=re.IGNORECASE)
     dff["Age Adjusted Rate"] = dff["Age Adjusted Rate"].replace(regex_pat, 0)
 
     if chart_dropdown != "death_rate_all_time":
-        title = "Absolute deaths per county, <b>1999-2016</b>"
-        AGGREGATE_BY = "Deaths"
-        if "show_absolute_deaths_single_year" == chart_dropdown:
-            dff = dff[dff.Year == year]
-            title = "Absolute deaths per county, <b>{0}</b>".format(year)
-        elif "show_death_rate_single_year" == chart_dropdown:
-            dff = dff[dff.Year == year]
-            title = "Age-adjusted death rate per county, <b>{0}</b>".format(year)
+        title = "Absolute infection per county, <b>1999-2016</b>"
+        AGGREGATE_BY = "Infection"
+        if "show_absolute_infections_every_month" == chart_dropdown:
+            dff = dff[dff.Month == month]
+            title = "Absolute infection per county, <b>{0}</b>".format(month)
+        elif "show_infection_rates_every_month" == chart_dropdown:
+            dff = dff[dff.Month == month]
+            title = "Age-adjusted infection rate per county, <b>{0}</b>".format(month)
             AGGREGATE_BY = "Age Adjusted Rate"
 
         dff[AGGREGATE_BY] = pd.to_numeric(dff[AGGREGATE_BY], errors="coerce")
-        deaths_or_rate_by_fips = dff.groupby("County")[AGGREGATE_BY].sum()
-        deaths_or_rate_by_fips = deaths_or_rate_by_fips.sort_values()
+        infection_rate_by_fips = dff.groupby("County")[AGGREGATE_BY].sum()
+        infection_rate_by_fips = infection_rate_by_fips.sort_values()
         # Only look at non-zero rows:
-        deaths_or_rate_by_fips = deaths_or_rate_by_fips[deaths_or_rate_by_fips > 0]
-        fig = deaths_or_rate_by_fips.iplot(
+        infection_rate_by_fips = infection_rate_by_fips[infection_rate_by_fips > 0]
+        fig = infection_rate_by_fips.iplot(
             kind="bar", y=AGGREGATE_BY, title=title, asFigure=True
         )
 
         fig_layout = fig["layout"]
         fig_data = fig["data"]
 
-        fig_data[0]["text"] = deaths_or_rate_by_fips.values.tolist()
+        fig_data[0]["text"] = infection_rate_by_fips.values.tolist()
         fig_data[0]["marker"]["color"] = "#2cfec1"
         fig_data[0]["marker"]["opacity"] = 1
         fig_data[0]["marker"]["line"]["width"] = 0
@@ -392,7 +393,7 @@ def display_selected_data(selectedData, chart_dropdown, year):
 
     fig = dff.iplot(
         kind="area",
-        x="Year",
+        x="Month",
         y="Age Adjusted Rate",
         text="County",
         categories="County",
@@ -407,7 +408,7 @@ def display_selected_data(selectedData, chart_dropdown, year):
             "#666666",
             "#1b9e77",
         ],
-        vline=[year],
+        vline=[month],
         asFigure=True,
     )
 
@@ -425,7 +426,7 @@ def display_selected_data(selectedData, chart_dropdown, year):
     fig_layout = fig["layout"]
 
     # See plot.ly/python/reference
-    fig_layout["yaxis"]["title"] = "Age-adjusted death rate per county per year"
+    fig_layout["yaxis"]["title"] = "Age-adjusted infection rate per county per month"
     fig_layout["xaxis"]["title"] = ""
     fig_layout["yaxis"]["fixedrange"] = True
     fig_layout["xaxis"]["fixedrange"] = False
@@ -444,7 +445,7 @@ def display_selected_data(selectedData, chart_dropdown, year):
     if len(fips) > 500:
         fig["layout"][
             "title"
-        ] = "Age-adjusted death rate per county per year <br>(only 1st 500 shown)"
+        ] = "Age-adjusted infection rate per county per month <br>(only 1st 500 shown)"
 
     return fig
 
