@@ -12,8 +12,6 @@ The system tackles the challenge of combining the data of visitation rates of va
 
 The main purpose visually identify associations and trends of how visiting these different types of PoIs affect infection rates in various regions of Houston. This will help further investigation and mining of the data.
 
-[View the Dash app](https://dash-gallery.plotly.host/dash-opioid-epidemic/)
-
 ## Getting Started
 
 ### Running the app locally
