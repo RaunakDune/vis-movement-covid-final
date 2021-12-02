@@ -355,7 +355,7 @@ def display_selected_data(selectedData, chart_dropdown, month):
     dff["Age Adjusted Rate"] = dff["Age Adjusted Rate"].replace(regex_pat, 0)
 
     if chart_dropdown != "infection_rate_all_time":
-        title = "Absolute infection per county, <b>1999-2016</b>"
+        title = "Absolute infection per county, <b>2020~2021</b>"
         AGGREGATE_BY = "Infection"
         if "show_absolute_infections_every_month" == chart_dropdown:
             dff = dff[dff.Month == month]

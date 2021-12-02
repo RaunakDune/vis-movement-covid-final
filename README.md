@@ -1,27 +1,22 @@
-# US opioid epidemic dataset and Dash app
+# Visualizing Multi-modal Spatio-temporal Movement Data
+## Raunak Sarbajna 
+### 1956665 rsarbajna@uh.edu
+### PhD Candidate, Dept. of Computer Science, University of Houston
+### COSC 6344 Visualization Final Project
 
-![plotly-dash-screencast](assets/app_screencast.gif)
+We present here a visualization system to identify patterns of movement that lead to increased COVID-19 infection rates from a combination of individual location/movement data and infection data.
 
-Poison induced death data was downloaded from [CDC Wonder](dash_app_screencast.gif), using cause-of-death codes X40–X44 (unintentional), X60–X64 (suicide), X85 (homicide), or Y10–Y14 (undetermined intent).
+The visualization is used to aid an epidemiological simulation model. The data is from the continental United States, but allow limiting to a defined area-of-interest (such as the city of Houston) in order to make the results be comprehensible.
+
+The system tackles the challenge of combining the data of visitation rates of various Points of Interest (PoI) with the COVID infection rates.
+
+The main purpose visually identify associations and trends of how visiting these different types of PoIs affect infection rates in various regions of Houston. This will help further investigation and mining of the data.
 
 [View the Dash app](https://dash-gallery.plotly.host/dash-opioid-epidemic/)
 
 ## Getting Started
 
 ### Running the app locally
-We suggest you to create a separate virtual environment running Python 3 for this app, and install all of the required dependencies there. Run in Terminal/Command Prompt:
-
-```
-git clone https://github.com/plotly/dash-sample-apps
-cd dash-sample-apps/apps/dash-opioid-epidemic
-python3 -m virtualenv venv
-```
-In UNIX system: 
-
-```
-source venv/bin/activate
-```
-In Windows: 
 
 ```
 venv\Scripts\activate
@@ -34,7 +29,3 @@ pip install -r requirements.txt
 ```
 
 and all of the required `pip` packages, will be installed, and the app will be able to run.
-
-
-Dash app inspired by [this Tableau dashboard](https://www.cdc.gov/nchs/data-visualization/drug-poisoning-mortality/)
-
